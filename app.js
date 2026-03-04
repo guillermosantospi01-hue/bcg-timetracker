@@ -75,6 +75,19 @@ document.addEventListener('DOMContentLoaded', () => {
   calMonth = now.getMonth();
   render();
 
+  // Auto-open Quick Add if #quickadd in URL (works on new tabs AND existing tabs)
+  function checkQuickAdd() {
+    if (window.location.hash === '#quickadd') {
+      window.location.hash = '';
+      // Only open if no modal is already open
+      if (!document.querySelector('.modal-overlay')) {
+        setTimeout(() => showAddDialog(), 150);
+      }
+    }
+  }
+  checkQuickAdd();
+  window.addEventListener('hashchange', checkQuickAdd);
+
   // Close calendar on outside click
   document.addEventListener('click', (e) => {
     if (!calendarVisible) return;
@@ -360,17 +373,18 @@ function showHistory() {
     data.all_codes.forEach(c => {
       const typeColor = `var(--${c.type.toLowerCase()})`;
       const already = currentIds.has(c.id);
-      const actionHTML = already
+      const addHTML = already
         ? '<span class="already">✓ Ya añadido</span>'
         : `<button class="btn btn-green btn-small" onclick="addFromHistory('${c.id}', this)">+ Añadir</button>`;
       listHTML += `
-        <div class="history-item">
+        <div class="history-item" id="hist-${c.id}">
           <span class="type-badge" style="background:${typeColor}">${c.type.slice(0, 3)}</span>
           <div class="project-text">
             <div class="code">${esc(c.code)}</div>
             <div class="subtitle">${esc(c.name)} · ${esc(c.who)}</div>
           </div>
-          ${actionHTML}
+          ${addHTML}
+          <button class="btn btn-surface btn-icon" title="Eliminar del historial" onclick="deleteFromHistory('${c.id}')">🗑️</button>
         </div>`;
     });
   }
@@ -386,6 +400,31 @@ function showHistory() {
     </div>`;
 
   document.body.appendChild(overlay);
+}
+
+function deleteFromHistory(codeId) {
+  const info = getCodeInfo(data, codeId);
+  const name = info ? info.code : '?';
+  if (!confirm(`¿Eliminar "${name}" del historial?\nSe quitará también de todas las semanas.`)) return;
+
+  // Remove from all weeks
+  for (const wk in data.weeks) {
+    data.weeks[wk] = data.weeks[wk].filter(e => e.code_id !== codeId);
+  }
+  // Remove from catalog
+  data.all_codes = data.all_codes.filter(c => c.id !== codeId);
+  saveData(data);
+  render();
+
+  // Remove row from the dialog
+  const row = document.getElementById(`hist-${codeId}`);
+  if (row) row.remove();
+
+  // If no codes left, close the modal
+  if (data.all_codes.length === 0) {
+    const overlay = document.querySelector('.modal-overlay');
+    if (overlay) overlay.remove();
+  }
 }
 
 function addFromHistory(codeId, btn) {
