@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Global shortcut: Ctrl+Shift+Space → Quick Add
   document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.code === 'Space') {
+    if (e.ctrlKey && e.altKey && e.code === 'KeyT') {
       e.preventDefault();
       // Don't open if a modal is already open
       if (!document.querySelector('.modal-overlay')) {
