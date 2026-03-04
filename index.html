@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCG Time Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>📊 BCG Time Tracker</h1>
+      <span class="hotkey">Ctrl+Shift+Space → Quick Add</span>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-surface" onclick="showHistory()">📋 Historial</button>
+      <button class="btn btn-accent" onclick="showAddDialog()">➕ Añadir Case Code</button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav">
+    <button class="btn btn-surface" onclick="prevWeek()">◀ Semana anterior</button>
+    <span class="week-label" id="week-label"></span>
+    <button class="btn btn-green" onclick="goToday()">Hoy</button>
+    <button class="btn btn-surface" onclick="nextWeek()">Semana siguiente ▶</button>
+    <button class="btn btn-surface" id="cal-toggle" onclick="toggleCalendar(event)">📅</button>
+  </div>
+
+  <!-- Main content -->
+  <div class="main">
+    <div class="calendar-popup" id="calendar-popup"></div>
+    <div class="table-header" id="table-header"></div>
+    <div id="table-body"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="total" id="footer-total">Total semana: 0h</span>
+    <span class="daily" id="footer-daily"></span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
